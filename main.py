@@ -66,7 +66,7 @@ def shift_to_gpu(batch):
 def save_params(model, logger, current_map, best_map):
     pass
 
-def train(model_train, train_dataloader, val_dataloader, eval_metric, logger, opt):
+def train(model_train, train_dataloader, val_dataloader, val_metric, logger, opt):
     # visualization
     vis = Visualizer(opt.env)
 
@@ -106,8 +106,6 @@ def train(model_train, train_dataloader, val_dataloader, eval_metric, logger, op
     rcnn_bbox_metric = RCNNL1LossMetric()
     # merge
     metrics2 = [rpn_acc_metric, rpn_bbox_metric, rcnn_acc_metric, rcnn_bbox_metric]
-
-    # train_dataloader, val_dataloader, val_metric = dataloader.DogDataLoader(model_train)
 
     logger.info('Starting training from Epoch {}'.format(opt.start_epoch+1))
     best_map = 0
@@ -234,28 +232,7 @@ def validate(model, val_dataloader, val_metric):
     return val_metric.get()
 
 if __name__ == '__main__':
-    # model_train = models.vgg16_faster_rcnn()
-    # initialize_model(model_train)
-    # model_train.initialize(ctx=mx.cpu())
-    # rain_dataloader, val_dataloader, val_metric = dataloader.VOCDataLoader(model_train)
-    # map_name, mean_ap = validate(model_train, val_dataloader, val_metric)
-    # print(map_name, mean_ap)
-    # data = mx.nd.random.uniform(shape=(1, 3, 999, 999))
-    # ids, scores, bboxes = model_train(data)
-    # print(ids.shape, scores.shape, bboxes.shape)
-    # im_name = 'person.jpg'
-    # x, orig_img = gluoncv.data.transforms.presets.rcnn.load_test(im_name)
-    # box_ids, scores, bboxes = model_train(x)
-    # print(bboxes)
-    # ax = gluoncv.utils.viz.plot_bbox(orig_img, bboxes[0], scores[0], box_ids[0], class_names=model_train.classes, thresh=0.1)
-
-    # plt.show()
-    # for param in model_train.collect_params().values():
-        # print(param)
-        # print(param._data)
-    #     # break
-    # for param in model_train.collect_train_params():
-    #     print(param)
+    
     opt = DefaultConfig()
     opt.parse({'model': 'vgg16_faster_rcnn',
                'env': 'vgg16',
@@ -279,11 +256,4 @@ if __name__ == '__main__':
     
     train_dataloader, val_dataloader, val_metric = dataloader.DogDataLoader(model_train)
     train(model_train, train_dataloader, val_dataloader, val_metric, logger, opt)
-    '''
-    data = mx.nd.random.uniform(shape=(1, 3, 999, 999))
-    ids, scores, bbox = model_train(data)
-    for param in model_train.collect_params().values():
-        print(param._data)
-        break
-    model_train.save_parameters('tmp.params')
-    '''
+    
